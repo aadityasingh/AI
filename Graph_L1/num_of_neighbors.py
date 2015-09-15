@@ -107,6 +107,9 @@ finally:
 # Finds the shortest path between two words in the graph
 root = raw_input('Enter starting word: \n')
 dest = raw_input('Enter destination: \n')
+
+t1 = time()
+
 q = Queue.Queue()
 
 dist_parent_hash = {}
@@ -136,8 +139,16 @@ else:
     connection.append(word_to_add)
     d -= 1
     word_to_add = dist_parent_hash[word_to_add][1]
-    to_print = connection.reverse()
-  print ' -> '.join(to_print)
+  print("The connection between the two words is: ")
+  i = len(connection) - 1
+  while i > -1:
+    print(connection[i])
+    i -= 1
+  print("The connection is " + str(len(connection)) + " words long, including the start and finish words.")
+
+t2 = time()
+
+print("It took " + str(t2-t1) + " seconds for the search to run.")
 
 toc = time()
 
