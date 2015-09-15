@@ -53,6 +53,9 @@ for r, d in zip(q_root, q_dest):
       dist_parent_hash_dest[nd[0] = dist_parent_hash_root[d][0] + 1
       dist_parent_hash_dest[nd][1] = d
       q_dest.append(nd)
+  
+  if len(set(q_root)&set(q_dest)) > 0:
+    
 
 if dist_parent_hash[dest][0] == -1:
   print('The word "' + dest + '" is not connected to the word "' + root + '".')
