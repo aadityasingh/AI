@@ -144,7 +144,7 @@ else:
   while i > -1:
     print(connection[i])
     i -= 1
-  print("The connection is " + str(len(connection)) + " words long, including the start and finish words.")
+  print("The connection is " + str(len(connection) -1) + " edges long.")
 
 t2 = time()
 
