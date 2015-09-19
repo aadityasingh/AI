@@ -55,22 +55,26 @@ root_side = ''
 dest_side = ''
 middle = ''
 
-for r, d in zip(q_root, q_dest):
-  if r != '':
-    n_root = ast.literal_eval(n_hash[r])
-    for nr in n_root:
-      if dist_parent_hash_root[nr][0] == -1:
-        dist_parent_hash_root[nr][0] = dist_parent_hash_root[r][0] + 1
-        dist_parent_hash_root[nr][1] = r
-        q_root.append(nr)
+i = 0
+pairs = zip(q_root, q_dest)
+l = len(pairs)
 
-  if d != '':
-    n_dest = ast.literal_eval(n_hash[d])
-    for nd in n_dest:
-      if dist_parent_hash_dest[nd][0] == -1:
-        dist_parent_hash_dest[nd][0] = dist_parent_hash_root[d][0] + 1
-        dist_parent_hash_dest[nd][1] = d
-        q_dest.append(nd)
+while i < l:
+  r = pairs[i][0]
+  d = pairs[i][1]
+  n_root = ast.literal_eval(n_hash[r])
+  for nr in n_root:
+    if dist_parent_hash_root[nr][0] == -1:
+      dist_parent_hash_root[nr][0] = dist_parent_hash_root[r][0] + 1
+      dist_parent_hash_root[nr][1] = r
+      q_root.append(nr)
+
+  n_dest = ast.literal_eval(n_hash[d])
+  for nd in n_dest:
+    if dist_parent_hash_dest[nd][0] == -1:
+      dist_parent_hash_dest[nd][0] = dist_parent_hash_dest[d][0] + 1
+      dist_parent_hash_dest[nd][1] = d
+      q_dest.append(nd)
   
   intersection = set(q_root)&set(q_dest)
   if len(intersection) > 0:
@@ -78,6 +82,10 @@ for r, d in zip(q_root, q_dest):
     root_side = r
     dest_side = d
     break
+
+  i += 1
+  pairs = zip(q_root, q_dest)
+  l = len(pairs)
 
 if middle == '':
   print('The word "' + dest + '" is not connected to the word "' + root + '".')
