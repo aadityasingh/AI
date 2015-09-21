@@ -119,15 +119,19 @@ for w in array_of_text_from_file:
 dist_parent_hash[root] = [0, '']
 q.put(root)
 
+count = 0
+
 while q.empty() == False:
   x = q.get()
-  #print(x)
   neighbors = ast.literal_eval(n_hash[x])
   for n in neighbors:
     if dist_parent_hash[n][0] == -1:
+      count += 1
       dist_parent_hash[n][0] = dist_parent_hash[x][0] + 1
       dist_parent_hash[n][1] = x
       q.put(n)
+  if dest in neighbors:
+    break
 
 if dist_parent_hash[dest][0] == -1:
   print('The word "' + dest + '" is not connected to the word "' + root + '".')
@@ -149,6 +153,7 @@ else:
 t2 = time()
 
 print("It took " + str(t2-t1) + " seconds for the search to run.")
+print("The program cycled through " + str(count) + " words.")
 
 toc = time()
 

@@ -58,6 +58,7 @@ middle = ''
 i = 0
 pairs = zip(q_root, q_dest)
 l = len(pairs)
+count = 0
 
 while i < l:
   r = pairs[i][0]
@@ -65,6 +66,7 @@ while i < l:
   n_root = ast.literal_eval(n_hash[r])
   for nr in n_root:
     if dist_parent_hash_root[nr][0] == -1:
+      count += 1
       dist_parent_hash_root[nr][0] = dist_parent_hash_root[r][0] + 1
       dist_parent_hash_root[nr][1] = r
       q_root.append(nr)
@@ -72,6 +74,7 @@ while i < l:
   n_dest = ast.literal_eval(n_hash[d])
   for nd in n_dest:
     if dist_parent_hash_dest[nd][0] == -1:
+      count += 1
       dist_parent_hash_dest[nd][0] = dist_parent_hash_dest[d][0] + 1
       dist_parent_hash_dest[nd][1] = d
       q_dest.append(nd)
@@ -127,4 +130,5 @@ else:
 t2 = time()
 
 print("It took " + str(t2-t1) + " seconds for the search to run.")
+print("The search cycled through " + str(count) + " words.")
 # print("The program cycled through " + str(c) + " words.")
