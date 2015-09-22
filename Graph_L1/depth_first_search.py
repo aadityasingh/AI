@@ -12,8 +12,8 @@ try:
 finally:
   f.close()
 
-root = raw_input('Enter starting word: \n')
-dest = raw_input('Enter destination: \n')
+root = input('Enter starting word: \n')
+dest = input('Enter destination: \n')
 
 t1 = time()
 
@@ -27,19 +27,37 @@ dist_parent_hash[root] = [0, '']
 stack.append(root)
 
 count = 0
+level = 0
 
-while len(stack) > 0:
-  x = stack.pop()
-  neighbors = ast.literal_eval(n_hash[x])
-  for n in neighbors:
-    if dist_parent_hash[n][0] == -1:
-      count += 1
-      dist_parent_hash[n][0] = dist_parent_hash[x][0] + 1
-      dist_parent_hash[n][1] = x
-      stack.append(n)
-  if dest in neighbors:
-    break
+# while len(stack) > 0:
+#   x = stack.pop()
+#   neighbors = ast.literal_eval(n_hash[x])
+#   if dist_parent_hash[x][0] < level:
+#     for n in neighbors:
+#       count += 1
+#       if dist_parent_hash[n][0] == -1:
+#         dist_parent_hash[n][0] = dist_parent_hash[x][0] + 1
+#         dist_parent_hash[n][1] = x
+#         stack.append(n)
+#   else:
+#     stack.append(x)
 
+def dls(node, problem, limit):
+  if dist_parent_hash[problem][0] != -1:
+    return True
+  elif dist_parent_hash[node][0] == limit:
+    return 'cutoff'
+  else:
+    neighbors = ast.literal_eval(n_hash[x])
+    for n in neighbors:
+      if dist_parent_hash[n][0] == -1:
+        dist_parent_hash[n][0] = dist_parent_hash[x][0] + 1
+        dist_parent_hash[n][1] = x
+        stack.append(n)      
+
+
+
+print(str(dist_parent_hash[dest][0]))
 if dist_parent_hash[dest][0] == -1:
   print('The word "' + dest + '" is not connected to the word "' + root + '".')
 else:

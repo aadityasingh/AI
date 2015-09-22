@@ -1,3 +1,7 @@
+# Works in python 2
+# Python 3 implementation is not finished
+# because zip works differently in Python 3.
+
 from time import time
 import pickle
 import ast
