@@ -40,11 +40,11 @@ def neighbors_hash():
     h[str(word)] = str(all_neighbors_for_word(word))
   return h
 
-# # Takes a word as input, and prints out its neighbors
-# word = raw_input('Enter word to find neighbors for: \n')
-# n = all_neighbors_for_word(word)
-# print('There are ' + str(len(n)) + ' neighbors:')
-# print('\n'.join(n))
+# Takes a word as input, and prints out its neighbors
+word = raw_input('Enter word to find neighbors for: \n')
+n = all_neighbors_for_word(word)
+print('There are ' + str(len(n)) + ' neighbors:')
+print('\n'.join(n))
 
 # print("Making graph...")
 # t1 = time()
@@ -123,15 +123,15 @@ count = 0
 
 while q.empty() == False:
   x = q.get()
+  if x == dest:
+    break
+  count += 1
   neighbors = ast.literal_eval(n_hash[x])
   for n in neighbors:
     if dist_parent_hash[n][0] == -1:
-      count += 1
       dist_parent_hash[n][0] = dist_parent_hash[x][0] + 1
       dist_parent_hash[n][1] = x
       q.put(n)
-  if dest in neighbors:
-    break
 
 if dist_parent_hash[dest][0] == -1:
   print('The word "' + dest + '" is not connected to the word "' + root + '".')

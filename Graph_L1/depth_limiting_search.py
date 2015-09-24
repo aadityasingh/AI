@@ -47,28 +47,45 @@ for w in array_of_text_from_file:
 #         dist_parent_hash[n][1] = x
 #         stack.append(n)
 
-def dfs(node, problem, parent):
-  if dist_parent_hash[node][0] == -1:
-    dist_parent_hash[node][1] = parent
-    if parent == '':
-      dist_parent_hash[node][0] = 0
-    else:
-      dist_parent_hash[node][0] = dist_parent_hash[parent][0] + 1
-
-    if node == problem:
-      return True
-    else:
-      neighbors = ast.literal_eval(n_hash[node])
-      retval = False
-      for n in neighbors:
-        retval = retval | dfs(n, problem, node)
-      return retval
+def dls(node, problem, parent, limit):
+  if parent == '':
+    distance = 0
   else:
-    return False
+    distance = dist_parent_hash[parent][0] + 1
 
-found_word = dfs(root, dest, '')
+  if distance < limit:
+    if dist_parent_hash[node][0] == -1:
+      dist_parent_hash[node][1] = parent
+      dist_parent_hash[node][0] = distance
 
-if found_word == False:
+      if node == problem:
+        return 100
+      else:
+        neighbors = ast.literal_eval(n_hash[node])
+        retval = 1
+        for n in neighbors:
+          r = dls(n, problem, node, limit)
+          if r > retval:
+            retval = r
+
+        return retval
+    else:
+      return 1
+  else:
+    return 2
+
+lim = 0
+inc_limit = dls(root, dest, '', lim)
+while inc_limit == 2:
+  for w in dist_parent_hash.keys():
+    dist_parent_hash[w] = [-1, '']
+  lim += 1
+  inc_limit = dls(root, dest, '', lim)
+
+
+found_word = inc_limit
+
+if found_word == 1:
   print('The word "' + dest + '" is not connected to the word "' + root + '".')
 else:
   connection = []
@@ -88,4 +105,4 @@ else:
 t2 = time()
 
 print("It took " + str(t2-t1) + " seconds for the search to run.")
-print("The program cycled through " + str(count) + " words.")
+# print("The program cycled through " + str(count) + " words.")
