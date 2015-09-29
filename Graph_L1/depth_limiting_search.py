@@ -1,11 +1,12 @@
+# Uses python3
+
 from time import time
 import pickle
-import ast
 
 # this makes an array of all the words in the file
 array_of_text_from_file = open('words.txt').read().split()
 
-f = open('save.p', 'rb')
+f = open('saved_graph.p', 'rb')
 
 try:
   n_hash = pickle.load(f)
@@ -18,8 +19,10 @@ dest = input('Enter destination: \n')
 t1 = time()
 
 dist_parent_hash = {}
+visited_hash = {}
 for w in array_of_text_from_file:
   dist_parent_hash[w] = [-1, '']
+  visited_hash[w] = False
 
 # while len(stack) > 0:
 #   x = stack.pop()
@@ -54,14 +57,18 @@ def dls(node, problem, parent, limit):
     distance = dist_parent_hash[parent][0] + 1
 
   if distance < limit:
-    if dist_parent_hash[node][0] == -1:
-      dist_parent_hash[node][1] = parent
-      dist_parent_hash[node][0] = distance
+    if visited_hash[node] == False:
+
+      visited_hash[node] = True
+
+      if dist_parent_hash[node][0] == -1:
+        dist_parent_hash[node][1] = parent
+        dist_parent_hash[node][0] = distance
 
       if node == problem:
         return 100
       else:
-        neighbors = ast.literal_eval(n_hash[node])
+        neighbors = n_hash[node]
         retval = 1
         for n in neighbors:
           r = dls(n, problem, node, limit)
@@ -77,8 +84,8 @@ def dls(node, problem, parent, limit):
 lim = 0
 inc_limit = dls(root, dest, '', lim)
 while inc_limit == 2:
-  for w in dist_parent_hash.keys():
-    dist_parent_hash[w] = [-1, '']
+  for w in visited_hash.keys():
+    visited_hash[w] = False
   lim += 1
   inc_limit = dls(root, dest, '', lim)
 

@@ -1,11 +1,12 @@
+# Uses python3
+
 from time import time
 import pickle
-import ast
 
 # this makes an array of all the words in the file
 array_of_text_from_file = open('words.txt').read().split()
 
-f = open('save.p', 'rb')
+f = open('saved_graph.p', 'rb')
 
 try:
   n_hash = pickle.load(f)
@@ -58,7 +59,7 @@ def dfs(node, problem, parent):
     if node == problem:
       return True
     else:
-      neighbors = ast.literal_eval(n_hash[node])
+      neighbors = n_hash[node]
       retval = False
       for n in neighbors:
         retval = retval | dfs(n, problem, node)
@@ -67,6 +68,12 @@ def dfs(node, problem, parent):
     return False
 
 found_word = dfs(root, dest, '')
+t2 = time()
+
+count = 0
+for w in dist_parent_hash.keys():
+  if dist_parent_hash[w][0] != -1:
+    count += 1
 
 if found_word == False:
   print('The word "' + dest + '" is not connected to the word "' + root + '".')
@@ -84,8 +91,6 @@ else:
     print(connection[i])
     i -= 1
   print("The connection is " + str(len(connection) -1) + " edges long.")
-
-t2 = time()
 
 print("It took " + str(t2-t1) + " seconds for the search to run.")
 print("The program cycled through " + str(count) + " words.")

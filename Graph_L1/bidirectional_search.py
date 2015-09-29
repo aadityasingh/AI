@@ -4,12 +4,11 @@
 
 from time import time
 import pickle
-import ast
 
 # this makes an array of all the words in the file
 array_of_text_from_file = open('words.txt').read().split()
 
-f = open('save.p', 'rb')
+f = open('saved_graph.p', 'rb')
 
 try:
   n_hash = pickle.load(f)
@@ -46,15 +45,6 @@ dist_parent_hash_dest[dest] = [0, '']
 q_root.append(root)
 q_dest.append(dest)
 
-# while len(q_root) != 0:
-#   x = q_root.pop(0)
-#   neighbors = ast.literal_eval(n_hash[x])
-#   for n in neighbors:
-#     if dist_parent_hash[n][0] == -1:
-#       dist_parent_hash[n][0] = dist_parent_hash[x][0] + 1
-#       dist_parent_hash[n][1] = x
-#       q_root.append(n)
-
 root_side = ''
 dest_side = ''
 middle = ''
@@ -67,7 +57,7 @@ count = 0
 while i < l:
   r = pairs[i][0]
   d = pairs[i][1]
-  n_root = ast.literal_eval(n_hash[r])
+  n_root = n_hash[r]
   for nr in n_root:
     if dist_parent_hash_root[nr][0] == -1:
       count += 1
@@ -75,7 +65,7 @@ while i < l:
       dist_parent_hash_root[nr][1] = r
       q_root.append(nr)
 
-  n_dest = ast.literal_eval(n_hash[d])
+  n_dest = n_hash[d]
   for nd in n_dest:
     if dist_parent_hash_dest[nd][0] == -1:
       count += 1

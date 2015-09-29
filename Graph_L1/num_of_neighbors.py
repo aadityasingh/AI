@@ -1,3 +1,5 @@
+# Uses python 2
+
 from time import time
 import pickle
 import Queue
