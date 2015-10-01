@@ -53,10 +53,12 @@ i = 0
 pairs = zip(q_root, q_dest)
 l = len(pairs)
 count = 0
+max_q_length = 0
 
-while i < l:
-  r = pairs[i][0]
-  d = pairs[i][1]
+while l > 0:
+  r = pairs[0][0]
+  d = pairs[0][1]
+
   n_root = n_hash[r]
   for nr in n_root:
     if dist_parent_hash_root[nr][0] == -1:
@@ -65,6 +67,13 @@ while i < l:
       dist_parent_hash_root[nr][1] = r
       q_root.append(nr)
 
+  intersection = set(q_root)&set(q_dest)
+  if len(intersection) > 0:
+    middle = intersection.pop()
+    root_side = r
+    dest_side = d
+    break
+
   n_dest = n_hash[d]
   for nd in n_dest:
     if dist_parent_hash_dest[nd][0] == -1:
@@ -72,6 +81,12 @@ while i < l:
       dist_parent_hash_dest[nd][0] = dist_parent_hash_dest[d][0] + 1
       dist_parent_hash_dest[nd][1] = d
       q_dest.append(nd)
+
+
+  q_root.pop(0)
+  q_dest.pop(0)
+  if (len(q_root) + len(q_dest)) > max_q_length:
+    max_q_length = len(q_root) + len(q_dest)
   
   intersection = set(q_root)&set(q_dest)
   if len(intersection) > 0:
@@ -80,7 +95,6 @@ while i < l:
     dest_side = d
     break
 
-  i += 1
   pairs = zip(q_root, q_dest)
   l = len(pairs)
 
@@ -125,4 +139,5 @@ t2 = time()
 
 print("It took " + str(t2-t1) + " seconds for the search to run.")
 print("The search cycled through " + str(count) + " words.")
+print("The maximum queue length is " + str(max_q_length) + ".")
 # print("The program cycled through " + str(c) + " words.")
