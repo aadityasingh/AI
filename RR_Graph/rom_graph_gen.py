@@ -23,7 +23,8 @@ def dist(n1, n2):
   del_lat = lat2 - lat1
   del_long = long2 - long1
 
-  a = math.sin()
+  # WEBSITE: http://mathforum.org/library/drmath/view/51711.html
+  a = math.pow(math.sin(del_lat/2), 2) + math.cos(lat1) * math.cos(lat2) * math.pow(math.sin(del_long/2), 2)
 
 
 # Makes a hash, where each node corresponds to a list of 2-tuples. Each 2-tuple has the first number referring to another node, and the second number referring to the distance to the node
