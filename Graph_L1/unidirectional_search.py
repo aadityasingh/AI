@@ -1,8 +1,5 @@
-# Uses python 2
-
 from time import time
 import pickle
-import Queue
 
 # this makes an array of all the words in the file
 array_of_text_from_file = open('words.txt').read().split()
@@ -15,8 +12,8 @@ finally:
   f.close()
 
 # Finds the shortest path between two words in the graph
-root = raw_input('Enter starting word: \n')
-dest = raw_input('Enter destination: \n')
+root = input('Enter starting word: \n')
+dest = input('Enter destination: \n')
 
 t1 = time()
 
