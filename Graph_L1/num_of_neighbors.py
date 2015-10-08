@@ -1,3 +1,5 @@
+# Uses python 2
+
 from time import time
 import pickle
 import Queue
@@ -40,11 +42,11 @@ def neighbors_hash():
     h[str(word)] = str(all_neighbors_for_word(word))
   return h
 
-# # Takes a word as input, and prints out its neighbors
-# word = raw_input('Enter word to find neighbors for: \n')
-# n = all_neighbors_for_word(word)
-# print('There are ' + str(len(n)) + ' neighbors:')
-# print('\n'.join(n))
+# Takes a word as input, and prints out its neighbors
+word = raw_input('Enter word to find neighbors for: \n')
+n = all_neighbors_for_word(word)
+print('There are ' + str(len(n)) + ' neighbors:')
+print('\n'.join(n))
 
 # print("Making graph...")
 # t1 = time()
@@ -119,9 +121,13 @@ for w in array_of_text_from_file:
 dist_parent_hash[root] = [0, '']
 q.put(root)
 
+count = 0
+
 while q.empty() == False:
   x = q.get()
-  #print(x)
+  if x == dest:
+    break
+  count += 1
   neighbors = ast.literal_eval(n_hash[x])
   for n in neighbors:
     if dist_parent_hash[n][0] == -1:
@@ -144,11 +150,12 @@ else:
   while i > -1:
     print(connection[i])
     i -= 1
-  print("The connection is " + str(len(connection)) + " words long, including the start and finish words.")
+  print("The connection is " + str(len(connection) -1) + " edges long.")
 
 t2 = time()
 
 print("It took " + str(t2-t1) + " seconds for the search to run.")
+print("The program cycled through " + str(count) + " words.")
 
 toc = time()
 
