@@ -53,9 +53,6 @@ dist_parent_hash[root] = [0, '', 0]
 
 d_root = dist_to_dest(root)
 q = {d_root: root}
-# immediate_neighbors = graph[root]
-# for n in immediate_neighbors:
-#   q[n[1]] = n[0]
 
 count = 0
 
@@ -75,10 +72,11 @@ while len(q) > 0:
   for node in neighbors:
     n = node[0]
     d = node[1]
-    if dist_parent_hash[n][0] == -1:
+    distance = dist_parent_hash[x][2] + d
+    if ( (dist_parent_hash[n][0] == -1) | (dist_parent_hash[n][2] > distance) ):
       dist_parent_hash[n][0] = dist_parent_hash[x][0] + 1
       dist_parent_hash[n][1] = x
-      dist_parent_hash[n][2] = dist_parent_hash[x][2] + d
+      dist_parent_hash[n][2] = distance
       q[(dist_parent_hash[n][2] + dist_to_dest(n))] = n
 
 
@@ -106,4 +104,3 @@ else:
 print("It took " + str(t2-t1) + " seconds for the search to run.")
 print("The search cycled through " + str(count) + " cities.")
 print("The maximum queue length was " + str(max_q_length) + ".")
-# print("The program cycled through " + str(count) + " words.")
