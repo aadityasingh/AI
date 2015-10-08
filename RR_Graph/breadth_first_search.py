@@ -3,69 +3,45 @@
 from time import time
 import pickle
 import sys
-from math import pi , acos , sin , cos
 
 network = input('Network of trains (NA or ROM): \n')
 if network == 'ROM':
-  pickled_nodes_file = 'rom_node_hash.p'
-  pickled_graph_file = 'rom_graph.p'
+  pickled_file = 'rom_graph.p'
 elif network == 'NA':
-  pickled_graph_file = 'na_graph.p'
-  pickled_nodes_file = 'na_node_hash.p'
+  pickled_file = 'na_graph.p'
 else:
   sys.exit()
 
-f_node = open(pickled_nodes_file, 'rb')
-
-try:
-  nodes = pickle.load(f_node)
-finally:
-  f_node.close()
-
-f = open(pickled_graph_file, 'rb')
+f = open(pickled_file, 'rb')
 
 try:
   graph = pickle.load(f)
 finally:
   f.close()
 
-root = input('Enter starting city: \n')
+root = input('Enter starting word: \n')
 dest = input('Enter destination: \n')
 
-def dist_to_dest(n):
-  lat1 = nodes[n][0] * pi/180.0
-  long1 = nodes[n][1] * pi/180.0
-  lat2 = nodes[dest][0] * pi/180.0
-  long2 = nodes[dest][1] * pi/180
-
-  R   = 3958.76
-
-  return acos( sin(lat1)*sin(lat2) + cos(lat1)*cos(lat2)*cos(long2-long1) ) * R
-
-
 t1 = time()
+
+q = []
 
 dist_parent_hash = {}
 for w in graph.keys():
   dist_parent_hash[w] = [-1, '', -1]
 
 dist_parent_hash[root] = [0, '', 0]
-
-d_root = dist_to_dest(root)
-q = {d_root: root}
-# immediate_neighbors = graph[root]
-# for n in immediate_neighbors:
-#   q[n[1]] = n[0]
+q.append(root)
 
 count = 0
 
-max_q_length = len(q)
+max_q_length = 0
 
 while len(q) > 0:
   if len(q) > max_q_length:
     max_q_length = len(q)
 
-  x = q.pop(min(q))
+  x = q.pop(0)
 
   if x == dest:
     break
@@ -79,7 +55,7 @@ while len(q) > 0:
       dist_parent_hash[n][0] = dist_parent_hash[x][0] + 1
       dist_parent_hash[n][1] = x
       dist_parent_hash[n][2] = dist_parent_hash[x][2] + d
-      q[(dist_parent_hash[n][2] + dist_to_dest(n))] = n
+      q.append(n)
 
 
 t2 = time()
@@ -104,6 +80,4 @@ else:
   print("The connection is " + str(dist_parent_hash[dest][2]) + " miles long.")
 
 print("It took " + str(t2-t1) + " seconds for the search to run.")
-print("The search cycled through " + str(count) + " cities.")
-print("The maximum queue length was " + str(max_q_length) + ".")
 # print("The program cycled through " + str(count) + " words.")
