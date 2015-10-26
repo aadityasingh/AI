@@ -1,4 +1,4 @@
-# This program runs an A* search between two nodes in a graph.
+# This program runs an A* search between two nodes in a railroad network.
 
 from time import time
 import pickle
@@ -51,12 +51,14 @@ for w in graph.keys():
 
 dist_parent_hash[root] = [0, '', 0]
 
-d_root = dist_to_dest(root)
+d_root = 0 #dist_to_dest(root)
 q = {d_root: root}
 
 count = 0
 
 max_q_length = len(q)
+
+closed_set = []
 
 while len(q) > 0:
   if len(q) > max_q_length:
@@ -68,6 +70,11 @@ while len(q) > 0:
     break
   count += 1
 
+  # The following is used to calculate closed set size
+  # It increases runtime significantly!
+  if (x in closed_set) == False:
+    closed_set.append(x)
+
   neighbors = graph[x]
   for node in neighbors:
     n = node[0]
@@ -77,7 +84,7 @@ while len(q) > 0:
       dist_parent_hash[n][0] = dist_parent_hash[x][0] + 1
       dist_parent_hash[n][1] = x
       dist_parent_hash[n][2] = distance
-      q[(dist_parent_hash[n][2] + dist_to_dest(n))] = n
+      q[(dist_parent_hash[n][2] + 0)] = n # dist_to_dest(n)
 
 
 t2 = time()
@@ -103,4 +110,5 @@ else:
 
 print("It took " + str(t2-t1) + " seconds for the search to run.")
 print("The search cycled through " + str(count) + " cities.")
+print("The size of the closed set is " + str(len(closed_set)) + ".")
 print("The maximum queue length was " + str(max_q_length) + ".")
