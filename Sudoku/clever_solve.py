@@ -115,13 +115,6 @@ def solve(p, h, r_depth):
     print('------------------')
     return True
 
-  # n = p.index(0)
-  # for i in range(9):
-  #   p[n] = i+1
-  #   if solve(list(p)):
-  #     return True
-
-  # return False
   n = min_key_by_value(h)
   for j in h[n]:
     p[n] = j
@@ -143,7 +136,27 @@ def solve(p, h, r_depth):
       format_print(next_p)
       print('------------------')
       return True
+
+    cont_val = False
+    to_pop = []
+    for q in next_poss_hash:
+      poss = list(next_poss_hash[q])
+      for r in list(set(neighbors_hash[q]) & set(next_poss_hash.keys())):
+        for v in list(set(next_poss_hash[r]) & set(poss)):
+          poss.remove(v)
+
+      if len(poss) == 1:
+        next_p[q] = poss[0]
+        to_pop.append(q)
+      elif len(poss) > 1:
+        cont_val = True
+
+    if cont_val:
+      continue
     
+    for tp in to_pop:
+      next_poss_hash.pop(tp)
+
     if solve(next_p, next_poss_hash, (r_depth + 1)):
       return True
 
@@ -179,4 +192,8 @@ for p in puzzles:
 t2 = time()
 
 print("The total time to run all of the puzzles is: " + str(t2-t1) + " seconds.")
-# Takes 204.817 seconds 
+    
+
+  
+
+
