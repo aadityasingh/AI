@@ -14,6 +14,34 @@ BOXES[(2, 0)] = [54, 55, 56, 63, 64, 65, 72, 73, 74]
 BOXES[(2, 1)] = [57, 58, 59, 66, 67, 68, 75, 76, 77]
 BOXES[(2, 2)] = [60, 61, 62, 69, 70, 71, 78, 79, 80]
 
+def column_set(n):
+  # Finds column neighbors
+  ret = []
+  column = n%9
+  for i in range(9):
+    if (i*9+column != n):
+      ret.append((i*9+column))
+  return ret
+
+def row_set(n):
+  # Finds row neighbors
+  ret = []
+  row = n//9
+  for i in range(9):
+    if (row*9+i != n):
+      ret.append((row*9+i))
+  return ret
+
+def box_set(n):
+  # Finds box neighbors
+  ret = []
+  b_row = (n//9)//3
+  b_column = (n%9)//3
+  for i in BOXES[(b_row, b_column)]:
+    if i != n:
+      ret.append(i)
+  return ret
+
 puzzle_strings = open(input_file).read().split('\n')
 
 puzzles = []
@@ -31,30 +59,11 @@ for s in puzzle_strings:
 # Make the hash of neighbors
 neighbors_hash = {}
 for n in range(81):
-  neighbors = []
-
-  # Add column neighbors
-  column = n%9
-  for i in range(9):
-    if (i*9+column != n):
-      neighbors.append((i*9+column))
-
-  # Add row neighbors
-  row = n//9
-  for i in range(9):
-    if (row*9+i != n):
-      neighbors.append((row*9+i))
-
-  # Add box neighbors
-  b_row = row//3
-  b_column = column//3
-  for i in BOXES[(b_row, b_column)]:
-    if ((i != n) & ((i in neighbors) == False)):
-      neighbors.append(i)
+  temp_neighbors = column_set(n) + row_set(n) + box_set(n)
+  neighbors = list(set(temp_neighbors))
 
   neighbors_hash[n] = neighbors
 
-# *** IS VALID IS NOT WORKING!!!
 def is_valid(p):
   for n in range(81):
     for i in neighbors_hash[n]:
@@ -125,6 +134,7 @@ def solve(p, h, r_depth):
     
     next_p = list(p)
     next_poss_hash = {}
+
     for i in x:
       if len(x[i]) == 1:
         next_p[i] = x[i][0]
@@ -137,23 +147,69 @@ def solve(p, h, r_depth):
       print('------------------')
       return True
 
-    cont_val = False
+    # cont_val = False
+    # to_pop = []
+    # for q in next_poss_hash:
+    #   poss = list(next_poss_hash[q])
+    #   for r in list(set(neighbors_hash[q]) & set(next_poss_hash.keys())):
+    #     for v in list(set(next_poss_hash[r]) & set(poss)):
+    #       poss.remove(v)
+
+    #   if len(poss) == 1:
+    #     next_p[q] = poss[0]
+    #     to_pop.append(q)
+    #   elif len(poss) > 1:
+    #     cont_val = True
+
+    # if cont_val:
+    #   continue
+    
+    # for tp in to_pop:
+    #   next_poss_hash.pop(tp)
+
     to_pop = []
-    for q in next_poss_hash:
-      poss = list(next_poss_hash[q])
-      for r in list(set(neighbors_hash[q]) & set(next_poss_hash.keys())):
+    cont = False
+    for k in next_poss_hash:
+      poss = list(next_poss_hash[k])
+      for c in list(set(column_set(k)) & set(next_poss_hash.keys())):
+        for v in list(set(next_poss_hash[c]) & set(poss)):
+          poss.remove(v)
+
+      if len(poss) == 1:
+        next_p[k] = poss[0]
+        to_pop.append(k)
+        continue
+      elif len(poss) > 1:
+        cont_val = True
+
+      poss = list(next_poss_hash[k])
+      for r in list(set(row_set(k)) & set(next_poss_hash.keys())):
         for v in list(set(next_poss_hash[r]) & set(poss)):
           poss.remove(v)
 
       if len(poss) == 1:
-        next_p[q] = poss[0]
-        to_pop.append(q)
+        next_p[k] = poss[0]
+        to_pop.append(k)
+        continue
       elif len(poss) > 1:
         cont_val = True
+        print(str(k) + '-' + s)
 
-    if cont_val:
+      poss = list(next_poss_hash[k])
+      for b in list(set(box_set(k)) & set(next_poss_hash.keys())):
+        for v in list(set(next_poss_hash[b]) & set(poss)):
+          poss.remove(v)
+
+      if len(poss) == 1:
+        next_p[k] = poss[0]
+        to_pop.append(k)
+        continue
+      elif len(poss) > 1:
+        cont_val = True      
+
+    if cont:
       continue
-    
+
     for tp in to_pop:
       next_poss_hash.pop(tp)
 
