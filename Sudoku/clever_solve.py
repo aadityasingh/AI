@@ -128,18 +128,32 @@ def solve(p, h, r_depth):
   for j in h[n]:
     p[n] = j
 
-    x = possibilities(p)
-    if x == False:
-      continue
-    
-    next_p = list(p)
-    next_poss_hash = {}
+    #TMP CODE 1
 
-    for i in x:
-      if len(x[i]) == 1:
-        next_p[i] = x[i][0]
-      else:
-        next_poss_hash[i] = x[i]
+    next_p = list(p)
+    next_poss_hash = h.copy()
+
+    try:
+      for nbor in neighbors_hash[n]:
+        if next_p[nbor] == 0:
+          poss = list(h[nbor])
+          try:
+            poss.remove(j)
+          except Exception:
+            pass
+
+          if len(poss) == 0:
+            raise ValueError('need to continue outer loop')
+          elif len(poss) == 1:
+            next_p[nbor] = poss[0]
+            next_poss_hash.pop(nbor)
+          else:
+            next_poss_hash[nbor] = poss
+
+    except ValueError:
+      continue
+
+
 
     if len(next_poss_hash) == 0:
       print("Solved puzzle: ")
@@ -147,71 +161,7 @@ def solve(p, h, r_depth):
       print('------------------')
       return True
 
-    # cont_val = False
-    # to_pop = []
-    # for q in next_poss_hash:
-    #   poss = list(next_poss_hash[q])
-    #   for r in list(set(neighbors_hash[q]) & set(next_poss_hash.keys())):
-    #     for v in list(set(next_poss_hash[r]) & set(poss)):
-    #       poss.remove(v)
-
-    #   if len(poss) == 1:
-    #     next_p[q] = poss[0]
-    #     to_pop.append(q)
-    #   elif len(poss) > 1:
-    #     cont_val = True
-
-    # if cont_val:
-    #   continue
-    
-    # for tp in to_pop:
-    #   next_poss_hash.pop(tp)
-
-    to_pop = []
-    cont = False
-    for k in next_poss_hash:
-      poss = list(next_poss_hash[k])
-      for c in list(set(column_set(k)) & set(next_poss_hash.keys())):
-        for v in list(set(next_poss_hash[c]) & set(poss)):
-          poss.remove(v)
-
-      if len(poss) == 1:
-        next_p[k] = poss[0]
-        to_pop.append(k)
-        continue
-      elif len(poss) > 1:
-        cont_val = True
-
-      poss = list(next_poss_hash[k])
-      for r in list(set(row_set(k)) & set(next_poss_hash.keys())):
-        for v in list(set(next_poss_hash[r]) & set(poss)):
-          poss.remove(v)
-
-      if len(poss) == 1:
-        next_p[k] = poss[0]
-        to_pop.append(k)
-        continue
-      elif len(poss) > 1:
-        cont_val = True
-        print(str(k) + '-' + s)
-
-      poss = list(next_poss_hash[k])
-      for b in list(set(box_set(k)) & set(next_poss_hash.keys())):
-        for v in list(set(next_poss_hash[b]) & set(poss)):
-          poss.remove(v)
-
-      if len(poss) == 1:
-        next_p[k] = poss[0]
-        to_pop.append(k)
-        continue
-      elif len(poss) > 1:
-        cont_val = True      
-
-    if cont:
-      continue
-
-    for tp in to_pop:
-      next_poss_hash.pop(tp)
+    #TMP CODE 2
 
     if solve(next_p, next_poss_hash, (r_depth + 1)):
       return True
