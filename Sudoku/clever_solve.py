@@ -105,6 +105,8 @@ def possibilities(p):
       else:
         possible_hash[n] = possible
   return possible_hash
+  
+#TMP CODE 3
 
 def min_key_by_value(h):
   m = 10
@@ -128,38 +130,56 @@ def solve(p, h, r_depth):
   for j in h[n]:
     p[n] = j
 
-    #TMP CODE 1
+    x = possibilities(p)
+    if x == False:
+      continue
 
     next_p = list(p)
-    next_poss_hash = h.copy()
+    next_poss_hash = {}
 
-    try:
-      for nbor in neighbors_hash[n]:
-        if next_p[nbor] == 0:
-          poss = list(h[nbor])
-          try:
-            poss.remove(j)
-          except Exception:
-            pass
+    for i in x:
+      if len(x[i]) == 1:
+        next_p[i] = x[i][0]
+      else:
+        next_poss_hash[i] = x[i]
 
-          if len(poss) == 0:
-            raise ValueError('need to continue outer loop')
-          elif len(poss) == 1:
-            next_p[nbor] = poss[0]
-            next_poss_hash.pop(nbor)
-          else:
-            next_poss_hash[nbor] = poss
+    #TMP CODE 4
 
-    except ValueError:
-      continue
+    # cont_val = False
+    # try:
+    #   for nbor in neighbors_hash[n]:
+    #     if next_p[nbor] == 0:
+    #       poss = list(h[nbor])
+    #       try:
+    #         poss.remove(j)
+    #       except Exception:
+    #         pass
+
+    #       if len(poss) == 0:
+    #         cont_val = True
+    #         raise ValueError('need to continue outer loop')
+    #       elif len(poss) == 1:
+    #         next_p[nbor] = poss[0]
+    #         next_poss_hash.pop(nbor)
+    #       else:
+    #         next_poss_hash[nbor] = poss
+
+    # except ValueError:
+    #   pass
+
+    # if cont_val:
+    #   continue
 
 
 
     if len(next_poss_hash) == 0:
-      print("Solved puzzle: ")
-      format_print(next_p)
-      print('------------------')
-      return True
+      if is_solved(next_p):
+        print("Solved puzzle: ")
+        format_print(next_p)
+        print('------------------')
+        return True
+      else:
+        continue
 
     #TMP CODE 2
 
@@ -169,7 +189,9 @@ def solve(p, h, r_depth):
   return False
 
 t1 = time()
+time_arr = []
 for p in puzzles:
+  tp1 = time()
   print("Unsolved puzzle #" + str(puzzles.index(p)+1) + ": ")
   format_print(p)
   if is_valid(p) == False:
@@ -195,7 +217,15 @@ for p in puzzles:
   else:
     solve(p, poss_hash, 0)
 
+  tp2 = time()
+  time_arr.append((tp2-tp1))
+
 t2 = time()
+
+counter = 1
+for t in time_arr:
+  print(str(counter) + ". " + str(t))
+  counter += 1
 
 print("The total time to run all of the puzzles is: " + str(t2-t1) + " seconds.")
     

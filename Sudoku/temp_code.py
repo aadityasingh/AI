@@ -61,3 +61,33 @@
 # for tp in to_pop:
 #   next_poss_hash.pop(tp)
 # *** Single possible value code END
+
+#TMP CODE 3
+# def refresh_poss(p_arr, poss_d, i):
+#   retval = {}
+#   for k in poss_d:
+#     poss = list(poss_d[k])
+#     if k in neighbors_hash[i]:
+#       try:
+#         poss.remove(p_arr[i])
+#       except Exception:
+#         pass
+#     retval[k] = poss
+#   return retval
+
+# next_p = list(p)
+# x = refresh_poss(p, h, n)
+# next_poss_hash = {}
+
+# cont_val = False
+# for i in x:
+#   if len(x[i]) == 0:
+#     cont_val = True
+#     break
+#   if len(x[i]) == 1:
+#     next_p[i] = x[i][0]
+#   else:
+#     next_poss_hash[i] = x[i]
+
+# if cont_val:
+#   continue

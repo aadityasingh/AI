@@ -139,10 +139,13 @@ def solve(p, h, r_depth):
         next_poss_hash[i] = x[i]
 
     if len(next_poss_hash) == 0:
-      print("Solved puzzle: ")
-      format_print(next_p)
-      print('------------------')
-      return True
+      if is_solved(next_p):
+        print("Solved puzzle: ")
+        format_print(next_p)
+        print('------------------')
+        return True
+      else:
+        continue
     
     if solve(next_p, next_poss_hash, (r_depth + 1)):
       return True
