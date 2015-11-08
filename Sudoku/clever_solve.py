@@ -14,7 +14,7 @@ BOXES[(2, 0)] = [54, 55, 56, 63, 64, 65, 72, 73, 74]
 BOXES[(2, 1)] = [57, 58, 59, 66, 67, 68, 75, 76, 77]
 BOXES[(2, 2)] = [60, 61, 62, 69, 70, 71, 78, 79, 80]
 
-def column_set(n):
+def column_list(n):
   # Finds column neighbors
   ret = []
   column = n%9
@@ -23,7 +23,7 @@ def column_set(n):
       ret.append((i*9+column))
   return ret
 
-def row_set(n):
+def row_list(n):
   # Finds row neighbors
   ret = []
   row = n//9
@@ -32,7 +32,7 @@ def row_set(n):
       ret.append((row*9+i))
   return ret
 
-def box_set(n):
+def box_list(n):
   # Finds box neighbors
   ret = []
   b_row = (n//9)//3
@@ -59,7 +59,7 @@ for s in puzzle_strings:
 # Make the hash of neighbors
 neighbors_hash = {}
 for n in range(81):
-  temp_neighbors = column_set(n) + row_set(n) + box_set(n)
+  temp_neighbors = column_list(n) + row_list(n) + box_list(n)
   neighbors = list(set(temp_neighbors))
 
   neighbors_hash[n] = neighbors
@@ -99,7 +99,7 @@ def possibilities(p):
       for i in neighbors_hash[n]:
         if p[i] in possible:
           possible.remove(p[i])
-
+ 
       if len(possible) == 0:
         return False
       else:
@@ -117,6 +117,49 @@ def min_key_by_value(h):
       r = i
   return r
 
+def only_possibles(puz, poss):
+  retval = []
+  for n in poss:
+    for group in [row_list(n), column_list(n), box_list(n)]:
+      diff = set(poss[n])
+      for nbor in group:
+        if puz[nbor] == 0:
+          diff = diff - set(poss[nbor])
+      if len(diff) == 1:
+        t = (n, diff.pop())
+        retval.append(t)
+        break
+      elif len(diff) > 1:
+        return False
+
+  return retval
+
+def refresh_possibilities(arr):
+  puz = arr[0]
+  poss = arr[1]
+  if is_solved(puz):
+    return [puz, poss]
+
+  x = possibilities(puz)
+  if x == False:
+    return False
+
+  next_puz = list(puz)
+  next_poss = {}
+
+  one_more = False
+  for i in x:
+    if len(x[i]) == 1:
+      next_puz[i] = x[i][0]
+      one_more = True
+    else:
+      next_poss[i] = x[i]
+
+  if one_more:
+    return refresh_possibilities([next_puz, next_poss])
+  else:
+    return [next_puz, next_poss]
+
 def solve(p, h, r_depth):
   if is_valid(p) == False:
     return False
@@ -130,47 +173,18 @@ def solve(p, h, r_depth):
   for j in h[n]:
     p[n] = j
 
-    x = possibilities(p)
+    x = refresh_possibilities([p, h])
     if x == False:
       continue
 
-    next_p = list(p)
-    next_poss_hash = {}
+    next_p = x[0]
+    next_poss_hash = x[1]
 
-    for i in x:
-      if len(x[i]) == 1:
-        next_p[i] = x[i][0]
-      else:
-        next_poss_hash[i] = x[i]
-
-    #TMP CODE 4
-
-    # cont_val = False
-    # try:
-    #   for nbor in neighbors_hash[n]:
-    #     if next_p[nbor] == 0:
-    #       poss = list(h[nbor])
-    #       try:
-    #         poss.remove(j)
-    #       except Exception:
-    #         pass
-
-    #       if len(poss) == 0:
-    #         cont_val = True
-    #         raise ValueError('need to continue outer loop')
-    #       elif len(poss) == 1:
-    #         next_p[nbor] = poss[0]
-    #         next_poss_hash.pop(nbor)
-    #       else:
-    #         next_poss_hash[nbor] = poss
-
-    # except ValueError:
-    #   pass
-
-    # if cont_val:
-    #   continue
-
-
+    if is_solved(next_p):
+      print("Solved puzzle: ")
+      format_print(next_p)
+      print('------------------')
+      return True
 
     if len(next_poss_hash) == 0:
       if is_solved(next_p):
@@ -180,6 +194,25 @@ def solve(p, h, r_depth):
         return True
       else:
         continue
+
+    op_arr = only_possibles(next_p, next_poss_hash)
+    if op_arr == False:
+      continue
+
+    for t in op_arr:
+      next_p[t[0]] = t[1]
+      next_poss_hash.pop(t[0])
+
+    if len(next_poss_hash) == 0:
+      if is_solved(next_p):
+        print("Solved puzzle: ")
+        format_print(next_p)
+        print('------------------')
+        return True
+      else:
+        continue
+
+    #TMP CODE 4
 
     #TMP CODE 2
 
@@ -222,10 +255,18 @@ for p in puzzles:
 
 t2 = time()
 
-counter = 1
-for t in time_arr:
-  print(str(counter) + ". " + str(t))
-  counter += 1
+m1 = max(time_arr)
+i1 = time_arr.index(m1)
+time_arr.remove(m1)
+m2 = max(time_arr)
+i2 = time_arr.index(m2)
+time_arr.remove(m2)
+m3 = max(time_arr)
+i3 = time_arr.index(m3)
+
+print("The longest puzzle was #" + str(i1+1) + ", and it took " + str(m1) + " seconds.") # Number 57
+print("The second longest puzzle was #" + str(i2+1) + ", and it took " + str(m2) + " seconds.") # Number 79
+print("The third longest puzzle was #" + str(i3+1) + ", and it took " + str(m3) + " seconds.") # Number 97
 
 print("The total time to run all of the puzzles is: " + str(t2-t1) + " seconds.")
     
