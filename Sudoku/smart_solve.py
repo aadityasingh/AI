@@ -160,6 +160,31 @@ def refresh_possibilities(arr):
   else:
     return [next_puz, next_poss]
 
+def refresh_all(info_arr):
+  arr = refresh_possibilities(info_arr)
+  if arr == False:
+    return False
+  puz = arr[0]
+  poss = arr[1]
+  op_arr = only_possibles(puz, poss)
+  next_p = list(puz)
+  next_poss = poss
+
+  if op_arr == False:
+    return False
+
+  if len(op_arr) == 0:
+    return [puz, poss]
+
+  for t in op_arr:
+    next_p[t[0]] = t[1]
+    next_poss.pop(t[0])
+
+  return refresh_all([next_p, next_poss])
+  
+
+
+
 def solve(p, h, r_depth):
   if is_valid(p) == False:
     return False
@@ -173,12 +198,12 @@ def solve(p, h, r_depth):
   for j in h[n]:
     p[n] = j
 
-    x = refresh_possibilities([p, h])
-    if x == False:
+    refresh_arr = refresh_all([p, h])
+    if refresh_arr == False:
       continue
 
-    next_p = x[0]
-    next_poss_hash = x[1]
+    next_p = refresh_arr[0]
+    next_poss_hash = refresh_arr[1]
 
     if is_solved(next_p):
       print("Solved puzzle: ")
@@ -194,27 +219,6 @@ def solve(p, h, r_depth):
         return True
       else:
         continue
-
-    op_arr = only_possibles(next_p, next_poss_hash)
-    if op_arr == False:
-      continue
-
-    for t in op_arr:
-      next_p[t[0]] = t[1]
-      next_poss_hash.pop(t[0])
-
-    if len(next_poss_hash) == 0:
-      if is_solved(next_p):
-        print("Solved puzzle: ")
-        format_print(next_p)
-        print('------------------')
-        return True
-      else:
-        continue
-
-    #TMP CODE 4
-
-    #TMP CODE 2
 
     if solve(next_p, next_poss_hash, (r_depth + 1)):
       return True
