@@ -14,6 +14,23 @@ BOXES[(2, 0)] = [54, 55, 56, 63, 64, 65, 72, 73, 74]
 BOXES[(2, 1)] = [57, 58, 59, 66, 67, 68, 75, 76, 77]
 BOXES[(2, 2)] = [60, 61, 62, 69, 70, 71, 78, 79, 80]
 
+def rows_and_columns(n):
+  r = {}
+  c = {}
+  for i in range(n):
+    current_row = []
+    current_column = []
+    for j in range(n):
+      current_row.append(n*i+j)
+      current_column.append(i + n*j)
+    r[i] = current_row
+    c[i] = current_column
+  return (r, c)
+
+r_and_c = rows_and_columns(9)
+ROWS = r_and_c[0]
+COLUMNS = r_and_c[1]
+
 def column_list(n):
   # Finds column neighbors
   ret = []
@@ -182,6 +199,13 @@ def refresh_all(info_arr):
 
   return refresh_all([next_p, next_poss])
   
+def subgroup_exclusion(puz, poss):
+  for k in ROWS:
+    box_row = k//3
+    r = ROWS[k]
+    for box_col in range(3):
+      subgroup = r[(3*box_col):(3*box_col+3)]
+      
 
 
 
@@ -273,7 +297,8 @@ print("The second longest puzzle was #" + str(i2+1) + ", and it took " + str(m2)
 print("The third longest puzzle was #" + str(i3+1) + ", and it took " + str(m3) + " seconds.") # Number 97
 
 print("The total time to run all of the puzzles is: " + str(t2-t1) + " seconds.")
-# Runs in 11.55 seconds
+print(str(ROWS))
+# Runs in 10.97 seconds
 
   
 
