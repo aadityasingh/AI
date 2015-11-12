@@ -101,22 +101,66 @@ def format_print(p):
 
     print(line)
 
-def solve(p, unknown, poss):
-  if (num_of_errors(p) == 0):
-    print("Solved puzzle: ")
-    format_print(next_p)
-    print('------------------')
-    return True
+def neighbor_positions(p, unknowns):
+  retval = []
+  for i in unknowns:
+    for j in unknowns[(i+1):]:
+      x = p[i]
+      y = p[j]
+      p[i] = y
+      p[j] = x
+      retval.append(p)
+  return retval
+        
+
+
+def solve(p, unknowns):
+  # TMP Code 1
+  visited = [p]
+
+  d_p = num_of_errors(p, unknowns)
+  q = {d_p: p}
+
+  while len(q) > 0:
+    current_errors = min(q)
+
+    x = q.pop(current_errors)
+
+    if current_errors == 0:
+      print("Solved puzzle: ")
+      format_print(x)
+      print('------------------')
+      return True
+
+    neighbors = neighbor_positions(x, unknowns)
+    for puz in neighbors:
+      err = num_of_errors(puz, unknowns)
+      if err == 0:
+        print("Solved puzzle: ")
+        format_print(puz)
+        print('------------------')
+        return True
+      print("-")
+      format_print(puz)
+      if (puz in visited) == False:
+        q[err] = puz
+      visited.append(puz)
+
+  print("Puzzle is unsolvable!!!")
+  return False
+
 
 
 total_poss = []
 for i in range(9):
-  for j in range(9): total_poss.append(i)
+  for j in range(9): total_poss.append(i+1)
 
 for p in puzzles:
+  print("Unsolved puzzle #" + str(puzzles.index(p)+1) + ": ")
+  format_print(p)
   empty = []
   poss_left = list(total_poss)
-  for num in p:
+  for num in range(81):
     if p[num] == 0:
       empty.append(num)
     else:
@@ -125,20 +169,24 @@ for p in puzzles:
   if len(empty) == 0:
     if is_solved(p):
       print("Solved puzzle: ")
-      format_print(next_p)
+      format_print(p)
       print('------------------')
       continue
     else:
-      print("Puzzle is unsolvable!!!")
+      print("Puzzle is unsolvable!")
       continue
 
   if len(empty) != len(poss_left):
-    print("Puzzle is unsolvable!!!")
+    print("Puzzle is unsolvable!!")
     continue
 
-  
+  # Initial "random" assignment
+  i = 0
+  for n in empty:
+    p[n] = poss_left[i]
+    i+=1
 
-  solve(p, empty, poss_left)
+  solve(p, empty)
 
 
 
