@@ -102,52 +102,30 @@ def format_print(p):
     print(line)
 
 def neighbor_positions(p, unknowns):
-  retval = []
+  retval = {}
   for i in unknowns:
     for j in unknowns[(i+1):]:
-      x = p[i]
-      y = p[j]
-      p[i] = y
-      p[j] = x
-      retval.append(p)
+      next_p = list(p)
+      x = next_p[i]
+      y = next_p[j]
+      next_p[i] = y
+      next_p[j] = x
+      retval[num_of_errors(next_p)] = next_p
   return retval
         
 
 
 def solve(p, unknowns):
   # TMP Code 1
-  visited = [p]
+  if num_of_errors(p) == 0:
+    print("Solved puzzle: ")
+    format_print(p)
+    print('------------------')
+    return True
 
-  d_p = num_of_errors(p, unknowns)
-  q = {d_p: p}
+  neighbors = neighbor_positions(p, unknowns)
+  min_nbor = neighbors.pop(min(neighbors))
 
-  while len(q) > 0:
-    current_errors = min(q)
-
-    x = q.pop(current_errors)
-
-    if current_errors == 0:
-      print("Solved puzzle: ")
-      format_print(x)
-      print('------------------')
-      return True
-
-    neighbors = neighbor_positions(x, unknowns)
-    for puz in neighbors:
-      err = num_of_errors(puz, unknowns)
-      if err == 0:
-        print("Solved puzzle: ")
-        format_print(puz)
-        print('------------------')
-        return True
-      print("-")
-      format_print(puz)
-      if (puz in visited) == False:
-        q[err] = puz
-      visited.append(puz)
-
-  print("Puzzle is unsolvable!!!")
-  return False
 
 
 
