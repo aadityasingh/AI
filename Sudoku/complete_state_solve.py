@@ -104,27 +104,49 @@ def format_print(p):
 def neighbor_positions(p, unknowns):
   retval = {}
   for i in unknowns:
-    for j in unknowns[(i+1):]:
+    for j in unknowns[(unknowns.index(i)+1):]:
       next_p = list(p)
       x = next_p[i]
       y = next_p[j]
       next_p[i] = y
       next_p[j] = x
-      retval[num_of_errors(next_p)] = next_p
+      retval[num_of_errors(next_p, unknowns)] = next_p
   return retval
         
 
-
-def solve(p, unknowns):
-  # TMP Code 1
-  if num_of_errors(p) == 0:
+# *** DOESN'T WORK RIGHT NOW
+# Tabu search looks promising, although simple annealing might work also. Don't use genetic algorithm.
+# https://en.wikipedia.org/wiki/Sudoku_solving_algorithms#Stochastic_search_.2F_optimization_methods
+def solve(p, unknowns, count):
+  errors = num_of_errors(p, unknowns)
+  if errors == 0:
     print("Solved puzzle: ")
     format_print(p)
     print('------------------')
     return True
 
+  if count > 10:
+    print("Program reached a local min number of errors of " + str(errors) + ": ")
+    format_print(p)
+    print('------------------')
+    return False
+
   neighbors = neighbor_positions(p, unknowns)
   min_nbor = neighbors.pop(min(neighbors))
+
+  n_errors = num_of_errors(min_nbor, unknowns)
+  if n_errors > errors:
+    print("Program reached a local minimum number of errors of " + str(errors) + ": ")
+    format_print(p)
+    print('------------------')
+    return False
+  elif n_errors == errors:
+    count += 1
+    return solve(min_nbor, unknowns, count)
+  else:
+    count = 0
+    return solve(min_nbor, unknowns, count)
+
 
 
 
@@ -164,7 +186,7 @@ for p in puzzles:
     p[n] = poss_left[i]
     i+=1
 
-  solve(p, empty)
+  solve(p, empty, 0)
 
 
 
