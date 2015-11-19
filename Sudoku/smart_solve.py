@@ -197,14 +197,56 @@ def refresh_all(info_arr):
     next_p[t[0]] = t[1]
     next_poss.pop(t[0])
 
-  return refresh_all([next_p, next_poss])
+  se_arr = subgroup_exclusion(next_p, next_poss)
+  next_p1 = list(next_p)
+  next_poss2 = next_poss
+
+  if se_arr == False:
+    return False
+
+  if len(se_arr) == 0:
+    return [next_p, next_poss]
+
+  for t in se_arr:
+    next_p2[t[0]] = t[1]
+    next_poss2.pop(t[0])
+
+  return refresh_all([next_p2, next_poss2])
   
 def subgroup_exclusion(puz, poss):
   for k in ROWS:
     box_row = k//3
     r = ROWS[k]
+    subgroup_poss = []
+    subgroup_num = []
     for box_col in range(3):
       subgroup = r[(3*box_col):(3*box_col+3)]
+      sposs = set([])
+      x = 0
+      for spot in subgroup:
+        if puz[spot] == 0:
+          x += 1
+          sposs = sposs | set(poss[spot])
+      subgroup_num.append(x)
+      subgroup_poss.append(list(sposs))
+    total = set(subgroup_poss[0]+subgroup_poss[1] + subgroup_poss[2])
+    for i in range(3):
+      poss_list = subgroup_poss[i]
+      left = set(poss_list+poss_list)-total
+      if len(left) == subgroup_num[i]:
+        for place in BOXES[(box_row, i)]:
+          if puz[place] == 0:
+            poss[place] = list(set(poss[place]) - left)
+      elif len(left) > subgroup_num[i]:
+        return False
+
+  retval = []
+  for num in poss:
+    if len(poss[num]) == 1:
+      retval.append((num, poss[num][0]))
+  return retval
+
+
       
 
 

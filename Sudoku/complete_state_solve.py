@@ -79,7 +79,11 @@ def is_solved(p):
   else:
     return is_valid(p)
 
+#try making a better measure
+# Like if it is a problem in a row and column, count it as 2 errors
 def num_of_errors(p, unknowns):
+  if len(p) < 2:
+    return 1000
   num = 0
   for x in unknowns:
     for n in neighbors_hash[x]:
@@ -114,9 +118,7 @@ def neighbor_positions(p, unknowns):
   return retval
         
 
-# *** DOESN'T WORK RIGHT NOW
-# Tabu search looks promising, although simple annealing might work also. Don't use genetic algorithm.
-# https://en.wikipedia.org/wiki/Sudoku_solving_algorithms#Stochastic_search_.2F_optimization_methods
+# Only gets to a local min spot
 def solve(p, unknowns, count):
   errors = num_of_errors(p, unknowns)
   if errors == 0:
@@ -147,8 +149,27 @@ def solve(p, unknowns, count):
     count = 0
     return solve(min_nbor, unknowns, count)
 
+# Implements tabu search but is very very slow
+def solve2(p, unknowns, maxSize):
+  bestp = p
+  tabuList = []
+  while(num_of_errors(bestp, unknowns) != 0):
 
+    neighbors = neighbor_positions(bestp, unknowns)
 
+    key = min(neighbors)
+    min_nbor = neighbors.pop(key)
+    while(min_nbor in tabuList):
+      key = min(neighbors)
+      min_nbor = neighbors.pop(key)
+
+    if key < num_of_errors(bestp, unknowns):
+      bestp = min_nbor
+    tabuList.append(min_nbor)
+    if len(tabuList) > maxSize:
+      tabuList.pop(0)
+
+  return bestp
 
 
 total_poss = []
@@ -186,7 +207,11 @@ for p in puzzles:
     p[n] = poss_left[i]
     i+=1
 
-  solve(p, empty, 0)
+  #solve(p, empty, 0)
+  solvedp = solve2(p, empty, 5)
+  print("Solved puzzle: ")
+  format_print(solvedp)
+  print('------------------')
 
 
 
