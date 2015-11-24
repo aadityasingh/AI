@@ -197,21 +197,23 @@ def refresh_all(info_arr):
     next_p[t[0]] = t[1]
     next_poss.pop(t[0])
 
-  se_arr = subgroup_exclusion(next_p, next_poss)
-  next_p1 = list(next_p)
-  next_poss2 = next_poss
+  return refresh_all([next_p, next_poss])
 
-  if se_arr == False:
-    return False
+  # se_arr = subgroup_exclusion(next_p, next_poss)
+  # next_p2 = list(next_p)
+  # next_poss2 = next_poss
 
-  if len(se_arr) == 0:
-    return [next_p, next_poss]
+  # if se_arr == False:
+  #   return False
 
-  for t in se_arr:
-    next_p2[t[0]] = t[1]
-    next_poss2.pop(t[0])
+  # if len(se_arr) == 0:
+  #   return [next_p, next_poss]
 
-  return refresh_all([next_p2, next_poss2])
+  # for t in se_arr:
+  #   next_p2[t[0]] = t[1]
+  #   next_poss2.pop(t[0])
+
+  # return refresh_all([next_p2, next_poss2])
   
 def subgroup_exclusion(puz, poss):
   for k in ROWS:
@@ -339,7 +341,6 @@ print("The second longest puzzle was #" + str(i2+1) + ", and it took " + str(m2)
 print("The third longest puzzle was #" + str(i3+1) + ", and it took " + str(m3) + " seconds.") # Number 97
 
 print("The total time to run all of the puzzles is: " + str(t2-t1) + " seconds.")
-print(str(ROWS))
 # Runs in 10.97 seconds
 
   
