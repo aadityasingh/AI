@@ -2,7 +2,7 @@
 
 from time import time
 
-input_file = 'puzzle.txt'
+input_file = 'puzzles.txt'
 BOXES = {}
 BOXES[(0, 0)] = [0, 1, 2, 9, 10, 11, 18, 19, 20]
 BOXES[(0, 1)] = [3, 4, 5, 12, 13, 14, 21, 22, 23]
@@ -336,7 +336,3 @@ print("The longest puzzle was #" + str(i1+1) + ", and it took " + str(m1) + " se
 print("The second longest puzzle was #" + str(i2+1) + ", and it took " + str(m2) + " seconds.")
 print("The third longest puzzle was #" + str(i3+1) + ", and it took " + str(m3) + " seconds.")
 print("The total time to run all of the puzzles is: " + str(t2-t1) + " seconds.")
-
-  
-
-
