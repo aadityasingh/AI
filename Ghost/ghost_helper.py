@@ -14,10 +14,11 @@ print("4. Put in a dollar sign ($) for a hint")
 
 trie = {} 
 for word in words:
-  current_hash = trie
-  for l in word:
-    current_hash = current_hash.setdefault(l, {})
-  current_hash['!'] = '!'
+  if len(word) > 3:
+    current_hash = trie
+    for l in word:
+      current_hash = current_hash.setdefault(l, {})
+    current_hash['!'] = '!'
 
   # l = len(word)
   # for i in range(l):
@@ -27,6 +28,25 @@ for word in words:
   #     poss_hash[before].append(after)
   #   else:
   #     poss_hash[before] = [after]
+
+def find_winning_letter(current_level, turn):
+  if '!' in current_level:
+    if turn == 0:
+      return '!'
+    else:
+      return False
+
+  for k in current_level:
+    next_level = current_level[k]
+    next_turn = (turn + 1)%2
+    n = find_winning_letter(next_level, next_turn)
+    if n:
+      return k
+    else:
+      continue
+
+  return False
+
 
 def score_print(scores):
   print("SCORECHECK-------------------------------")
@@ -91,7 +111,8 @@ while True:
           to_print = "		Possible options: "
           possible_letters = []
           for k in current_level.keys():
-            possible_letters.append(k)
+            if k != "!":
+              possible_letters.append(k)
           possible_letters = sorted(possible_letters)
           for l in possible_letters:
           	to_print += l

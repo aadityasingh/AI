@@ -13,10 +13,11 @@ print("3. Put in a question mark (?) for a score check")
 
 trie = {} 
 for word in words:
-  current_hash = trie
-  for l in word:
-    current_hash = current_hash.setdefault(l, {})
-  current_hash['!'] = '!'
+  if len(word) > 3:
+    current_hash = trie
+    for l in word:
+      current_hash = current_hash.setdefault(l, {})
+    current_hash['!'] = '!'
 
   # l = len(word)
   # for i in range(l):
