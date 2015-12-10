@@ -9,8 +9,8 @@ print("Hello! Welcome to ghost. Please take a moment to read the following rules
 print("When prompted for your move, do one of the following: ")
 print("1. Put in a lowercase letter if you wish to say a letter")
 print("2. Put in an exclamation mark (!) if you wish to challenge")
-print("3. Put in a question mark (?) for a score check")
-print("4. Put in a dollar sign ($) for a hint")
+print("3. Put in a hash tag (#) for a score check")
+print("4. Put in a question mark (?) for a hint")
 
 trie = {} 
 for word in words:
@@ -29,24 +29,6 @@ for word in words:
   #   else:
   #     poss_hash[before] = [after]
 
-def find_winning_letter(current_level, turn):
-  if '!' in current_level:
-    if turn == 0:
-      return '!'
-    else:
-      return False
-
-  for k in current_level:
-    next_level = current_level[k]
-    next_turn = (turn + 1)%2
-    n = find_winning_letter(next_level, next_turn)
-    if n:
-      return k
-    else:
-      continue
-
-  return False
-
 
 def score_print(scores):
   print("SCORECHECK-------------------------------")
@@ -59,6 +41,23 @@ def player_lost(players, scores):
     if scores[player] == 5:
       return [True, player]
   return [False]
+
+def find_winning_letter(current_level):
+  if '!' in current_level:
+    return '!'
+
+  for k in current_level:
+    is_winning = True
+    if '!' in current_level[k]:
+      continue
+    for m in current_level[k]:
+      next_level = current_level[k][m]
+      x = find_winning_letter(next_level)
+      is_winning = is_winning & bool(x)
+    if is_winning:
+      return k
+
+  return False
 
 
 print("Okay! Let's get started!")
@@ -103,10 +102,10 @@ while True:
             score_print(scores)
           round_over = True
           repeat = False
-        elif next_char == '?':
+        elif next_char == '#':
           score_print(scores)
           repeat = True
-        elif next_char == "$":
+        elif next_char == "?":
           print()
           to_print = "		Possible options: "
           possible_letters = []
@@ -116,6 +115,17 @@ while True:
           possible_letters = sorted(possible_letters)
           for l in possible_letters:
           	to_print += l
+          print(to_print)
+          print()
+          repeat = True
+        elif next_char == "$":
+          print()
+          to_print = "    Winning letter: "
+          winning_letter = find_winning_letter(current_level)
+          if winning_letter:
+            to_print += winning_letter
+          else:
+            to_print = "    There is no definite win. Cheating doesn't always work :P"
           print(to_print)
           print()
           repeat = True
