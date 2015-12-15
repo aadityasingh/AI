@@ -11,8 +11,11 @@ print("1. Put in a lowercase letter if you wish to say a letter")
 print("2. Put in an exclamation mark (!) if you wish to challenge")
 print("3. Put in a hash tag (#) for a score check")
 print("4. Put in a question mark (?) for a hint")
+print("5. Put in a dollar sign ($) to cheat and find a definite win (DISCLAIMER: Only works sometimes for 2 players)")
+print("6. When playing with more than 2 players, use the pipe (|) to get the best letter.")
 
-trie = {} 
+trie = {}
+poss_hash = {} 
 for word in words:
   if len(word) > 3:
     current_hash = trie
@@ -20,14 +23,14 @@ for word in words:
       current_hash = current_hash.setdefault(l, {})
     current_hash['!'] = '!'
 
-  # l = len(word)
-  # for i in range(l):
-  #   before = word[:i]
-  #   after = word[i:]
-  #   if before in poss_hash:
-  #     poss_hash[before].append(after)
-  #   else:
-  #     poss_hash[before] = [after]
+  l = len(word)
+  for i in range(l):
+    before = word[:i]
+    after = word[i:]
+    if before in poss_hash:
+      poss_hash[before].append(after)
+    else:
+      poss_hash[before] = [after]
 
 
 def score_print(scores):
@@ -59,6 +62,23 @@ def find_winning_letter(current_level):
 
   return False
 
+# bugged with 4 players...
+def find_not_losing_letter(current_string, current_level, num_of_players):
+  prob_hash = {}
+  for k in current_level:
+    if current_string+k in poss_hash:
+      l = len(poss_hash[current_string + k])
+      count = 0
+      for rem_string in poss_hash[current_string + k]:
+        if len(rem_string)%num_of_players == 0:
+          count += 1
+      prob_hash[(l-count)/l] = k
+    elif k == '!':
+      prob_hash[1] = k
+    else:
+      prob_hash[0] = k
+  mp = max(prob_hash)
+  return (mp, prob_hash[mp])
 
 print("Okay! Let's get started!")
 num = input("How many people are playing: ")
@@ -75,6 +95,7 @@ round_num = 1
 # The following while loop is used for the whole game
 while True:
   print("Round #" + str(round_num))
+  actual_string = ''
   current_string = ""
   current_level = trie
   challenge_true = False
@@ -129,7 +150,16 @@ while True:
           print(to_print)
           print()
           repeat = True
-        else:
+        elif next_char == "|":
+          print()
+          to_print = "    Best letter: "
+          winning_letter = find_not_losing_letter(actual_string, current_level, len(players))
+          to_print += winning_letter[1] + " with probability " + str(winning_letter[0])
+          print(to_print)
+          print()
+          repeat = True
+        elif next_char in 'abcdefghijklmnopqrstuvwxyz' and len(next_char) == 1:
+          actual_string += next_char
           current_string += next_char + '-'
           if next_char in current_level:
             current_level = current_level[next_char]
@@ -140,6 +170,9 @@ while True:
           else:
             challenge_true = True
           repeat = False
+        else:
+          print("Not a letter!")
+          repeat = True
       if round_over:
         break
     if round_over:
